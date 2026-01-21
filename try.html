@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Suryatanaya</title>
+
+    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #0066cc;
+            --secondary: #004c99;
+            --accent: #1e90ff;
+            --navy: #f8fafc;
+            --navy-dark: #f1f5f9;
+            --light-blue: #001f3f;
+            --bg-primary: #d4d4d4;
+            --bg-secondary: #f1f5f9;
+            --text-primary: #202a3c;
+            --text-secondary: #000000;
+            --border: rgba(0, 102, 204, 0.15);
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 8%;
+            background: rgba(0, 31, 63, 0.75);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            transition: .4s;
+        }
+
+        header.scrolled {
+            padding: 12px 8%;
+            box-shadow: 0 10px 40px rgba(0, 102, 204, 0.1);
+            background: rgba(0, 31, 63, 0.85);
+        }
+
+        .logo {
+            width: 320px;
+            height: 80px;
+            background: url("logo.png") left center/contain no-repeat;
+        }
+
+        nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        nav a {
+            padding: 8px 0;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+            transition: .3s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: .3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        .cta-btn {
+            padding: 10px 24px !important;
+            background: var(--primary);
+            border-radius: 25px;
+            font-weight: 600;
+            color: #fff !important;
+            transition: .3s;
+        }
+
+        .cta-btn::after {
+            display: none;
+        }
+
+        .cta-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.3);
+        }
+
+        /* ABOUT HERO */
+        .about-hero {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 140px 20px 80px;
+            text-align: center;
+        }
+
+        .about-hero h1 {
+            font-size: clamp(2.5em, 5vw, 3.5em);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .about-hero p {
+            font-size: clamp(1.1em, 2vw, 1.3em);
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        /* SECTION */
+        section {
+            padding: 100px 8%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-badge {
+            padding: 10px 24px;
+            border-radius: 6px;
+            background: rgba(30, 144, 255, 0.1);
+            border: 1px solid var(--border);
+            color: var(--accent);
+            display: inline-block;
+            margin-bottom: 16px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .section-header h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        /* STORY SECTION */
+        .story-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+            margin-bottom: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .story-text p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            text-align: justify;
+            color: var(--text-secondary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        /* VALUES SECTION */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .value-card {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .value-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 102, 204, 0.15);
+            transform: translateX(5px);
+        }
+
+        .value-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .value-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .value-card p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* TEAM SECTION */
+        .team-section {
+            background: var(--bg-secondary);
+            padding: 80px 8%;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 102, 204, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 102, 204, 0.15);
+        }
+
+        .team-image {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+        .team-info {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .team-info h3 {
+            color: var(--primary);
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .team-info .role {
+            color: var(--accent);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .team-info p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* WHY CHOOSE US */
+        .about-box {
+            max-width: 1100px;
+            margin: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 20px 60px rgba(0, 102, 204, 0.08);
+        }
+
+        .about-box p {
+            margin-bottom: 24px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-size: 17px;
+        }
+
+        .about-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 80px 60px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .cta-section h2 {
+            font-size: clamp(32px, 4vw, 48px);
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: white;
+            color: var(--primary);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--bg-primary);
+            padding: 70px 8% 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 50px;
+            max-width: 1400px;
+            margin: auto;
+            margin-bottom: 50px;
+        }
+
+        .footer-box h3 {
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .footer-box p,
+        .footer-box a {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 12px;
+            transition: .3s;
+        }
+
+        .footer-box a:hover {
+            color: var(--accent);
+            padding-left: 8px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+            font-size: 14px;
+        }
+
+        /* Social Links */
+        .social-links {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .social-links a {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            background: rgba(30, 144, 255, 0.1);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: .3s;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.3);
+            border-color: var(--primary);
+        }
+
+        .social-links svg {
+            width: 22px;
+            height: 22px;
+            fill: var(--text-primary);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        .mobile-menu-btn span {
+            width: 25px;
+            height: 3px;
+            background: #ffffff;
+            transition: .3s;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-btn.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .mobile-menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: rgba(0, 31, 63, 0.98);
+            padding: 100px 30px 30px;
+            transition: .4s;
+            z-index: 999;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav a {
+            display: block;
+            padding: 15px 0;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 1px solid var(--border);
+            transition: .3s;
+        }
+
+        .mobile-nav a:hover {
+            padding-left: 10px;
+            color: var(--accent);
+        }
+
+        .mobile-nav .cta-btn {
+            margin-top: 20px;
+            text-align: center;
+            border: none;
+        }
+
+        /* Tablet */
+        @media(max-width: 1024px) {
+            .logo {
+                width: 250px;
+                height: 65px;
+            }
+
+            nav {
+                gap: 20px;
+            }
+
+            nav a {
+                font-size: 13px;
+            }
+
+            section {
+                padding: 80px 6%;
+            }
+
+            .story-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile */
+        @media(max-width: 768px) {
+            .desktop-nav {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: flex;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            header {
+                padding: 12px 5%;
+            }
+
+            .logo {
+                width: 200px;
+                height: 55px;
+            }
+
+            section {
+                padding: 60px 5%;
+            }
+
+            .about-hero {
+                padding: 120px 20px 60px;
+            }
+
+            .about-box {
+                padding: 35px 25px;
+            }
+
+            .about-box p {
+                font-size: 15px;
+            }
+
+            .section-header h2 {
+                font-size: 32px;
+            }
+
+            .cta-section {
+                padding: 50px 25px;
+            }
+
+            .cta-section h2 {
+                font-size: 28px;
+            }
+
+            .cta-section p {
+                font-size: 16px;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 35px;
+            }
+
+            .footer-box {
+                text-align: center;
+            }
+
+            .story-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-number {
+                font-size: 2.5em;
+            }
+        }
+
+        /* Small Mobile */
+        @media(max-width: 480px) {
+            header {
+                padding: 10px 4%;
+            }
+
+            .logo {
+                width: 160px;
+                height: 45px;
+            }
+
+            section {
+                padding: 50px 4%;
+            }
+
+            .about-hero {
+                padding: 100px 15px 50px;
+            }
+
+            .about-box {
+                padding: 25px 20px;
+            }
+
+            .cta-section {
+                padding: 40px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header id="header">
+        <div class="logo"></div>
+
+        <!-- Desktop Navigation -->
+        <nav class="desktop-nav">
+            <a href="index.html" class="cta-btn">Home</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <div class="mobile-menu-btn" id="mobileMenuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="index.html" class="cta-btn mobile-nav-link">Home</a>
+    </nav>
+
+    <div class="about-hero">
+        <h1>About Suryatanaya</h1>
+        <p>Engineering the Future of Industrial Automation with Innovation, Precision, and Reliability</p>
+    </div>
+
+    <section style="background: var(--bg-secondary); padding-top: 60px;">
+        <div class="section-header">
+            <div class="section-badge">Our Journey</div>
+            <h2>Our Story</h2>
+        </div>
+        <div class="story-content">
+            <div class="story-text">
+                <p>Suryatanaya Innovation LLP was founded with a vision to bridge the gap between traditional
+                    industrial processes and modern automation technology. We recognized that many industries were
+                    struggling with outdated systems, inefficient processes, and the challenges of integrating
+                    Industry 4.0 technologies.</p>
+
+                <p>Our journey began with a simple mission: to make advanced industrial automation accessible,
+                    reliable, and effective for businesses of all sizes. From our base in Ahmedabad, Gujarat, we've
+                    grown into a trusted partner for industries seeking to optimize their operations through smart
+                    automation solutions.</p>
+
+                <p>Today, we specialize in comprehensive automation services including PLC programming, SCADA
+                    integration, instrumentation, industrial networking, and IoT solutions. Our expertise spans
+                    across process industries, manufacturing plants, water treatment facilities, and beyond.</p>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Projects Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Technical Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section style="background: var(--bg-primary);">
+        <div class="section-header">
+            <div class="section-badge">What Drives Us</div>
+            <h2>Our Core Values</h2>
+        </div>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">⚡</div>
+                <h3>Innovation</h3>
+                <p>We constantly explore cutting-edge technologies and methodologies to deliver solutions that keep
+                    our clients ahead of the curve in the rapidly evolving industrial landscape.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🎯</div>
+                <h3>Precision</h3>
+                <p>Every system we design and implement is built with meticulous attention to detail, ensuring
+                    optimal performance, minimal downtime, and maximum efficiency.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h3>Reliability</h3>
+                <p>We build long-term partnerships with our clients by delivering consistent, dependable solutions
+                    backed by comprehensive maintenance and support services.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🔒</div>
+                <h3>Safety</h3>
+                <p>Safety is paramount in industrial automation. We design systems with robust safety interlocks,
+                    failsafes, and compliance with international standards.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">📈</div>
+                <h3>Scalability</h3>
+                <p>Our solutions are designed to grow with your business, allowing seamless integration of new
+                    technologies and expansion of existing systems.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🌱</div>
+                <h3>Sustainability</h3>
+                <p>We focus on energy-efficient automation solutions that reduce waste, optimize resource usage, and
+                    support environmental compliance goals.</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="team-section">
+        <div class="section-header">
+            <div class="section-badge">Our People</div>
+            <h2>Meet Our Team</h2>
+        </div>
+        <div class="team-grid">
+            <div class="team-card">
+                <img src="p1.png" alt="Team Member" class="team-image">
+                <div class="team-info">
+                    <h3>Niel Engineer</h3>
+                    <div class="role">CEO & Founder</div>
+                    <p>He is the CEO & Founder of Suryatanaya Automation,
+                            providing visionary leadership and driving
+                            innovation across the organization. </p>
+                </div>
+            </div>
+            <div class="team-card">
+                <img src="p2.png" alt="Team Member" class="team-image">
+                <div class="team-info">
+                    <h3>Sujay Patel</h3>
+                    <div class="role">Technical Manager</div>
+                    <p>He is the Tech Manager at Suryatanaya Automation,
+                         responsible for overseeing technical operations,
+                          managing development teams, and ensuring reliable,
+                            scalable technology solutions that support the
+                            company's goals.</p>
+                </div>
+            </div>
+            <div class="team-card">
+                <img src="p3.png" alt="Team Member" class="team-image">
+                <div class="team-info">
+                    <h3>Sumit Patel</h3>
+                    <div class="role">Automation Head</div>
+                    <p>He is the Automation Head at Suryatanaya Automation,
+                            responsible for designing and implementing automation
+                            solutions, managing projects, and ensuring high-quality
+                            delivery for clients across various industries.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <section style="background: var(--bg-secondary);">
+        <div class="section-header">
+            <div class="section-badge">Why Us</div>
+            <h2>Why Choose Suryatanaya?</h2>
+        </div>
+        <div class="about-box">
+            <p><strong>Comprehensive Expertise:</strong> From initial system design to long-term maintenance, we
+                offer end-to-end automation solutions. Our services include PLC programming, SCADA integration,
+                instrumentation calibration, industrial networking, wastewater quality monitoring, and complete
+                plant commissioning for FTP, STP, and WTP facilities.</p>
+
+            <p><strong>Industry 4.0 Ready:</strong> We help businesses transition into the future with IoT
+                integration, cloud connectivity, real-time data analytics, and remote monitoring capabilities. Our
+                solutions enable predictive maintenance, process optimization, and data-driven decision making.</p>
+
+            <p><strong>Proven Track Record:</strong> We've successfully implemented automation projects across
+                various sectors including water treatment plants, manufacturing facilities, process industries, and
+                more. Our clients benefit from improved efficiency, reduced operational costs, and enhanced safety.
+            </p>
+
+            <p><strong>Ongoing Support:</strong> Through our AMC and CMC services, we provide continuous system
+                health monitoring, preventive maintenance, timely upgrades, and 24/7 emergency support to ensure
+                your operations run smoothly without interruption.</p>
+        </div>
+    </section>
+
+    <section style="background: var(--bg-primary);">
+        <div class="cta-section">
+            <h2>Ready to Transform Your Operations?</h2>
+            <p>Let's discuss how our automation solutions can optimize your industrial processes</p>
+            <a href="conn.html" class="cta-button">Get in Touch</a>
+        </div>
+    </section>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        window.addEventListener('scroll', () => {
+            document.getElementById('header')
+                .classList.toggle('scrolled', window.scrollY > 100);
+        });
+
+        gsap.utils.toArray("section").forEach(sec => {
+            gsap.from(sec, {
+                opacity: 0,
+                y: 60,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: sec,
+                    start: "top 80%"
+                }
+            });
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNav = document.getElementById('mobileNav');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenuBtn.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuBtn.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!mobileNav.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                mobileMenuBtn.classList.remove('active');
+                mobileNav.classList.remove('active');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
