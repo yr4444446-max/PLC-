@@ -11,31 +11,16 @@
 
     <style>
         :root {
-            --primary: #1e90ff;
-            --secondary: #0066cc;
-            --accent: #4da6ff;
-            --navy: #001f3f;
-            --navy-dark: #001529;
-            --light-blue: #e6f2ff;
-            --bg-primary: #001529;
-            --bg-secondary: #001f3f;
-            --text-primary: #ffffff;
-            --text-secondary: #b3d9ff;
-            --border: rgba(30, 144, 255, 0.2);
-            --card-bg: rgba(0, 31, 63, 0.6);
-        }
-
-        [data-theme="light"] {
             --primary: #0066cc;
             --secondary: #004c99;
             --accent: #1e90ff;
             --navy: #f8fafc;
             --navy-dark: #f1f5f9;
             --light-blue: #001f3f;
-            --bg-primary: #f8fafc;
+            --bg-primary: #d4d4d4;
             --bg-secondary: #f1f5f9;
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
+            --text-primary: #202a3c;
+            --text-secondary: #000000;
             --border: rgba(0, 102, 204, 0.15);
             --card-bg: rgba(255, 255, 255, 0.9);
         }
@@ -56,36 +41,6 @@
             color: var(--text-primary);
             overflow-x: hidden;
             line-height: 1.6;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        /* THEME TOGGLE */
-        .theme-toggle {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            width: 60px;
-            height: 60px;
-            background: var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1001;
-            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
-            transition: .3s;
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 30px rgba(30, 144, 255, 0.5);
-        }
-
-        .theme-toggle svg {
-            width: 28px;
-            height: 28px;
-            fill: white;
         }
 
         /* HEADER */
@@ -95,7 +50,7 @@
             left: 0;
             width: 100%;
             padding: 15px 8%;
-            background: rgba(0, 21, 41, 0.85);
+            background: rgba(0, 31, 63, 0.75);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -105,16 +60,8 @@
             transition: .4s;
         }
 
-        [data-theme="light"] header {
-            background: rgba(0, 31, 63, 0.75);
-        }
-
         header.scrolled {
             padding: 12px 8%;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="light"] header.scrolled {
             box-shadow: 0 10px 40px rgba(0, 102, 204, 0.1);
             background: rgba(0, 31, 63, 0.85);
         }
@@ -133,17 +80,13 @@
 
         nav a {
             padding: 8px 0;
-            color: var(--text-primary);
+            color: #ffffff;
             text-decoration: none;
             font-weight: 500;
             font-size: 14px;
             letter-spacing: 0.3px;
             transition: .3s;
             position: relative;
-        }
-
-        [data-theme="light"] nav a {
-            color: #ffffff;
         }
 
         nav a::after {
@@ -196,10 +139,6 @@
             position: absolute;
             inset: 0;
             background: url("s3.jpeg") center/cover no-repeat;
-            opacity: .25;
-        }
-
-        [data-theme="light"] .hero-bg {
             opacity: .35;
         }
 
@@ -280,10 +219,6 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 60px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="light"] .about-box {
             box-shadow: 0 20px 60px rgba(0, 102, 204, 0.08);
         }
 
@@ -505,13 +440,9 @@
         .mobile-menu-btn span {
             width: 25px;
             height: 3px;
-            background: var(--text-primary);
+            background: #ffffff;
             transition: .3s;
             border-radius: 2px;
-        }
-
-        [data-theme="light"] .mobile-menu-btn span {
-            background: #ffffff;
         }
 
         .mobile-menu-btn.active span:nth-child(1) {
@@ -533,15 +464,11 @@
             right: -100%;
             width: 280px;
             height: 100vh;
-            background: var(--bg-primary);
+            background: rgba(0, 31, 63, 0.98);
             padding: 100px 30px 30px;
             transition: .4s;
             z-index: 999;
             box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
-        }
-
-        [data-theme="light"] .mobile-nav {
-            background: rgba(0, 31, 63, 0.98);
         }
 
         .mobile-nav.active {
@@ -551,16 +478,12 @@
         .mobile-nav a {
             display: block;
             padding: 15px 0;
-            color: var(--text-primary);
+            color: #ffffff;
             text-decoration: none;
             font-weight: 500;
             font-size: 16px;
             border-bottom: 1px solid var(--border);
             transition: .3s;
-        }
-
-        [data-theme="light"] .mobile-nav a {
-            color: #ffffff;
         }
 
         .mobile-nav a:hover {
@@ -676,13 +599,6 @@
                 font-size: 16px;
             }
 
-            .theme-toggle {
-                bottom: 20px;
-                right: 20px;
-                width: 50px;
-                height: 50px;
-            }
-
             .footer-grid {
                 grid-template-columns: 1fr;
                 gap: 35px;
@@ -738,40 +654,11 @@
             .cta-section {
                 padding: 40px 20px;
             }
-
-            .theme-toggle {
-                width: 45px;
-                height: 45px;
-                bottom: 15px;
-                right: 15px;
-            }
-
-            .theme-toggle svg {
-                width: 22px;
-                height: 22px;
-            }
         }
     </style>
 </head>
 
 <body>
-
-    <div class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-        </svg>
-        <svg id="sunIcon" style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="5" />
-            <line x1="12" y1="1" x2="12" y2="3" />
-            <line x1="12" y1="21" x2="12" y2="23" />
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            <line x1="1" y1="12" x2="3" y2="12" />
-            <line x1="21" y1="12" x2="23" y2="12" />
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-        </svg>
-    </div>
 
     <header id="header">
         <div class="logo"></div>
@@ -781,7 +668,7 @@
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#services">Services</a>
-            <a href="#contact" class="cta-btn">Contact</a>
+            <a href="conn.html" class="cta-btn">Contact</a>
         </nav>
 
         <!-- Mobile Menu Button -->
@@ -1008,7 +895,6 @@
         </div>
     </footer>
 
-
     <script>
         gsap.registerPlugin(ScrollTrigger);
 
@@ -1104,7 +990,6 @@
             });
         });
     </script>
-
 </body>
 
 </html>
