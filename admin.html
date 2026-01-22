@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Suryatanaya</title>
+    <script src="https://unpkg.com/gsap@3/dist/gsap.min.js"></script>
+    <style>
+        :root {
+            --primary: #0066cc;
+            --secondary: #004c99;
+            --accent: #1e90ff;
+            --navy: #f8fafc;
+            --navy-dark: #f1f5f9;
+            --light-blue: #001f3f;
+            --bg-primary: #d4d4d4;
+            --bg-secondary: #f1f5f9;
+            --text-primary: #202a3c;
+            --text-secondary: #000000;
+            --border: rgba(0, 102, 204, 0.15);
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* LOGIN PAGE */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header h1 {
+            font-size: 32px;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: .3s;
+            background: white;
+            color: var(--text-primary);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .login-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 144, 255, 0.3);
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert.show {
+            display: flex;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        /* Header */
+        .dashboard-header {
+            background: rgba(0, 31, 63, 0.95);
+            padding: 20px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-header h1 {
+            color: white;
+            font-size: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info span {
+            color: white;
+            font-size: 14px;
+        }
+
+        .logout-btn {
+            padding: 10px 24px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.3);
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            padding: 40px 8%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.08);
+            transition: .3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(30, 144, 255, 0.15);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-card .number {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Submissions Table */
+        .submissions-container {
+            padding: 0 8% 60px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .submissions-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .submissions-header h2 {
+            font-size: 28px;
+            color: var(--text-primary);
+        }
+
+        .search-box {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-box input {
+            padding: 12px 18px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            min-width: 250px;
+            transition: .3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .filter-btn {
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 14px;
+        }
+
+        .filter-btn:hover {
+            background: var(--secondary);
+        }
+
+        .clear-btn {
+            padding: 12px 24px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+            font-size: 14px;
+        }
+
+        .clear-btn:hover {
+            background: #dc2626;
+        }
+
+        .table-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 102, 204, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--navy-dark);
+        }
+
+        thead th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: .2s;
+        }
+
+        tbody tr:hover {
+            background: var(--navy);
+        }
+
+        tbody td {
+            padding: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-new {
+            background: rgba(30, 144, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .status-read {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .view-btn {
+            background: rgba(30, 144, 255, 0.1);
+            color: var(--primary);
+        }
+
+        .view-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .delete-btn {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+        }
+
+        .delete-btn:hover {
+            background: var(--error);
+            color: white;
+        }
+
+        .no-data {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: .3s;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-modal:hover {
+            color: var(--error);
+            transform: rotate(90deg);
+        }
+
+        .detail-row {
+            margin-bottom: 24px;
+        }
+
+        .detail-row label {
+            display: block;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .detail-row p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary);
+        }
+
+        /* Responsive */
+        @media(max-width: 768px) {
+            .dashboard-header {
+                padding: 15px 5%;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .stats-container {
+                padding: 30px 5%;
+                grid-template-columns: 1fr;
+            }
+
+            .submissions-container {
+                padding: 0 5% 40px;
+            }
+
+            .submissions-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .search-box input {
+                flex: 1;
+                min-width: 0;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            table {
+                min-width: 800px;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- LOGIN PAGE -->
+    <div class="login-container" id="loginPage">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>Admin Login</h1>
+                <p>Suryatanaya Dashboard</p>
+            </div>
+
+            <div id="loginAlert" class="alert alert-error">
+                <span>✕</span>
+                <span>Invalid credentials. Please try again.</span>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required placeholder="Enter your username">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="Enter your password">
+                </div>
+
+                <button type="submit" class="login-btn">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="dashboard" id="dashboard">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1>📊 Admin Dashboard</h1>
+            <div class="user-info">
+                <span>Welcome, <strong id="adminName">Admin</strong></span>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <h3>Total Submissions</h3>
+                <div class="number" id="totalSubmissions">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>New Messages</h3>
+                <div class="number" id="newMessages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Read Messages</h3>
+                <div class="number" id="readMessages">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>This Week</h3>
+                <div class="number" id="weekMessages">0</div>
+            </div>
+        </div>
+
+        <!-- Submissions Table -->
+        <div class="submissions-container">
+            <div class="submissions-header">
+                <h2>Contact Submissions</h2>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Search by name, email, or subject...">
+                    <button class="filter-btn" id="refreshBtn">🔄 Refresh</button>
+                    <button class="clear-btn" id="clearAllBtn">🗑️ Clear All</button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsTable">
+                        <tr>
+                            <td colspan="6" class="loading">Loading submissions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="viewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Submission Details</h3>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        // Admin credentials
+        const ADMIN_USERNAME = 'admin';
+        const ADMIN_PASSWORD = '123456';
+
+        let submissions = [];
+        let filteredSubmissions = [];
+
+        // Storage functions using localStorage
+        function loadSubmissions() {
+            try {
+                const data = localStorage.getItem('suryatanaya_submissions');
+                return data ? JSON.parse(data) : [];
+            } catch (error) {
+                console.error('Error loading submissions:', error);
+                return [];
+            }
+        }
+
+        function saveSubmissions(data) {
+            try {
+                localStorage.setItem('suryatanaya_submissions', JSON.stringify(data));
+            } catch (error) {
+                console.error('Error saving submissions:', error);
+            }
+        }
+
+        // Login handling
+        const loginForm = document.getElementById('loginForm');
+        const loginPage = document.getElementById('loginPage');
+        const dashboard = document.getElementById('dashboard');
+        const loginAlert = document.getElementById('loginAlert');
+        const logoutBtn = document.getElementById('logoutBtn');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                loginPage.style.display = 'none';
+                dashboard.classList.add('active');
+                loadDashboard();
+            } else {
+                loginAlert.classList.add('show');
+                setTimeout(() => loginAlert.classList.remove('show'), 3000);
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => {
+            dashboard.classList.remove('active');
+            loginPage.style.display = 'flex';
+            loginForm.reset();
+        });
+
+        // Load dashboard data
+        function loadDashboard() {
+            submissions = loadSubmissions();
+            filteredSubmissions = [...submissions];
+            updateStats();
+            renderSubmissions(filteredSubmissions);
+        }
+
+        function updateStats() {
+            const total = submissions.length;
+            const newCount = submissions.filter(s => s.status === 'new').length;
+            const readCount = submissions.filter(s => s.status === 'read').length;
+
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            const weekCount = submissions.filter(s => {
+                try {
+                    return new Date(s.date) > weekAgo;
+                } catch {
+                    return false;
+                }
+            }).length;
+
+            document.getElementById('totalSubmissions').textContent = total;
+            document.getElementById('newMessages').textContent = newCount;
+            document.getElementById('readMessages').textContent = readCount;
+            document.getElementById('weekMessages').textContent = weekCount;
+
+            // Animate numbers
+            gsap.from('.stat-card .number', {
+                textContent: 0,
+                duration: 1,
+                ease: 'power1.out',
+                snap: { textContent: 1 }
+            });
+        }
+
+        function renderSubmissions(data) {
+            const tbody = document.getElementById('submissionsTable');
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="no-data">No submissions yet. Data will appear here when users submit the contact form.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map((sub, index) => `
+                <tr>
+                    <td>${sub.date}</td>
+                    <td>${sub.name}</td>
+                    <td>${sub.email}</td>
+                    <td>${sub.subject}</td>
+                    <td><span class="status-badge status-${sub.status}">${sub.status.toUpperCase()}</span></td>
+                    <td>
+                        <div class="action-btns">
+                            <button class="action-btn view-btn" onclick="viewSubmission(${index})">View</button>
+                            <button class="action-btn delete-btn" onclick="deleteSubmission(${index})">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const search = e.target.value.toLowerCase();
+            filteredSubmissions = submissions.filter(sub =>
+                sub.name.toLowerCase().includes(search) ||
+                sub.email.toLowerCase().includes(search) ||
+                sub.subject.toLowerCase().includes(search) ||
+                (sub.message && sub.message.toLowerCase().includes(search))
+            );
+            renderSubmissions(filteredSubmissions);
+        });
+
+        // Refresh button
+        document.getElementById('refreshBtn').addEventListener('click', () => {
+            document.getElementById('searchInput').value = '';
+            loadDashboard();
+        });
+
+        // Clear all submissions
+        document.getElementById('clearAllBtn').addEventListener('click', () => {
+            if (confirm('Are you sure you want to delete ALL submissions? This action cannot be undone.')) {
+                submissions = [];
+                saveSubmissions(submissions);
+                loadDashboard();
+            }
+        });
+
+        // View submission
+        function viewSubmission(index) {
+            const submission = filteredSubmissions[index];
+            if (!submission) return;
+
+            // Mark as read
+            const originalIndex = submissions.findIndex(s => s.id === submission.id);
+
+            if (originalIndex !== -1) {
+                submissions[originalIndex].status = 'read';
+                saveSubmissions(submissions);
+                updateStats();
+                renderSubmissions(filteredSubmissions);
+            }
+
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="detail-row">
+                    <label>Date & Time</label>
+                    <p>${submission.date}</p>
+                </div>
+                <div class="detail-row">
+                    <label>Full Name</label>
+                    <p>${submission.name}</p>
+                </div>
+                <div class="detail-row">
+                    <label>Email Address</label>
+                    <p>${submission.email}</p>
+                </div>
+                <div class="detail-row">
+                    <label>Phone Number</label>
+                    <p>${submission.phone || 'Not provided'}</p>
+                </div>
+                <div class="detail-row">
+                    <label>Subject</label>
+                    <p>${submission.subject}</p>
+                </div>
+                <div class="detail-row">
+                    <label>Message</label>
+                    <p>${submission.message}</p>
+                </div>
+            `;
+
+            document.getElementById('viewModal').classList.add('active');
+        }
+
+        // Delete submission
+        function deleteSubmission(index) {
+            if (confirm('Are you sure you want to delete this submission?')) {
+                const submission = filteredSubmissions[index];
+                const originalIndex = submissions.findIndex(s => s.id === submission.id);
+
+                if (originalIndex !== -1) {
+                    submissions.splice(originalIndex, 1);
+                    saveSubmissions(submissions);
+                    loadDashboard();
+                }
+            }
+        }
+
+        // Close modal
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('viewModal').classList.remove('active');
+        });
+
+        document.getElementById('viewModal').addEventListener('click', (e) => {
+            if (e.target.id === 'viewModal') {
+                document.getElementById('viewModal').classList.remove('active');
+            }
+        });
+
+        // Make functions globally available
+        window.viewSubmission = viewSubmission;
+        window.deleteSubmission = deleteSubmission;
+
+        // Auto-refresh every 10 seconds
+        setInterval(() => {
+            const currentCount = submissions.length;
+            submissions = loadSubmissions();
+            if (submissions.length !== currentCount) {
+                filteredSubmissions = [...submissions];
+                updateStats();
+                renderSubmissions(filteredSubmissions);
+            }
+        }, 10000);
+    </script>
+
+</body>
+
+</html>
