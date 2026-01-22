@@ -516,7 +516,6 @@
 
         <!-- Desktop Navigation -->
         <nav class="desktop-nav">
-
             <a href="index.html" class="cta-btn">Home</a>
         </nav>
 
@@ -684,14 +683,41 @@
         });
 
         // EmailJS Configuration
-        // IMPORTANT: Replace these with your actual EmailJS credentials
-        const EMAILJS_PUBLIC_KEY = 'PxaJRS_2euyrERCid'; // Get from EmailJS dashboard
-        const EMAILJS_SERVICE_ID = 'PLC_123'; // Get from EmailJS dashboard
-        const EMAILJS_TEMPLATE_ADMIN = 'template_3jxii7g'; // Template for admin
-        const EMAILJS_TEMPLATE_USER = 'template_rhirf0e'; // Template for user
+        const EMAILJS_PUBLIC_KEY = 'PxaJRS_2euyrERCid';
+        const EMAILJS_SERVICE_ID = 'PLC_123';
+        const EMAILJS_TEMPLATE_ADMIN = 'template_3jxii7g';
+        const EMAILJS_TEMPLATE_USER = 'template_rhirf0e';
 
         // Initialize EmailJS
-        emailjs.init('PxaJRS_2euyrERCid');
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+
+        // ========================================
+        // STORAGE FUNCTION FOR ADMIN DASHBOARD
+        // ========================================
+        function saveToLocalStorage(formData) {
+            try {
+                // Get existing submissions from localStorage
+                let submissions = JSON.parse(localStorage.getItem('suryatanaya_submissions') || '[]');
+
+                // Add new submission to the beginning of array
+                submissions.unshift({
+                    id: Date.now(), // Unique ID
+                    date: formData.date,
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone,
+                    subject: formData.subject,
+                    message: formData.message,
+                    status: 'new' // Mark as new/unread
+                });
+
+                // Save back to localStorage
+                localStorage.setItem('suryatanaya_submissions', JSON.stringify(submissions));
+                console.log('✅ Submission saved to localStorage for admin dashboard');
+            } catch (error) {
+                console.error('❌ Error saving to localStorage:', error);
+            }
+        }
 
         // Form Submission
         const contactForm = document.getElementById('contactForm');
@@ -723,10 +749,17 @@
             };
 
             try {
-                // Send email to admi
+                // ========================================
+                // STEP 1: Save to localStorage for Admin Dashboard
+                // ========================================
+                saveToLocalStorage(formData);
+
+                // ========================================
+                // STEP 2: Send email to admin
+                // ========================================
                 await emailjs.send(
-                    'PLC_123',
-                    'template_3jxii7g',
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_ADMIN,
                     {
                         to_email: 'kdvlogs78@gmail.com', // Admin email
                         from_name: formData.name,
@@ -738,10 +771,12 @@
                     }
                 );
 
-                // Send thank you email to user
+                // ========================================
+                // STEP 3: Send thank you email to user
+                // ========================================
                 await emailjs.send(
-                    'PLC_123',
-                    'template_rhirf0e',
+                    EMAILJS_SERVICE_ID,
+                    EMAILJS_TEMPLATE_USER,
                     {
                         to_email: formData.email,
                         to_name: formData.name,
@@ -776,6 +811,5 @@
     </script>
 
 </body>
-
 
 </html>
