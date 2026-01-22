@@ -31,11 +31,11 @@
         * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box
+            box-sizing: border-box;
         }
 
         html {
-            scroll-behavior: smooth
+            scroll-behavior: smooth;
         }
 
         body {
@@ -631,7 +631,9 @@
     </footer>
 
     <script>
-        // GSAP Animations
+        // ============================================
+        // GSAP ANIMATIONS
+        // ============================================
         gsap.registerPlugin(ScrollTrigger);
 
         window.addEventListener('scroll', () => {
@@ -658,7 +660,9 @@
             }
         });
 
-        // Mobile Menu Toggle
+        // ============================================
+        // MOBILE MENU TOGGLE
+        // ============================================
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileNav = document.getElementById('mobileNav');
         const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
@@ -682,7 +686,9 @@
             }
         });
 
-        // EmailJS Configuration
+        // ============================================
+        // EMAILJS CONFIGURATION
+        // ============================================
         const EMAILJS_PUBLIC_KEY = 'PxaJRS_2euyrERCid';
         const EMAILJS_SERVICE_ID = 'PLC_123';
         const EMAILJS_TEMPLATE_ADMIN = 'template_3jxii7g';
@@ -691,35 +697,43 @@
         // Initialize EmailJS
         emailjs.init(EMAILJS_PUBLIC_KEY);
 
-        // ========================================
-        // STORAGE FUNCTION FOR ADMIN DASHBOARD
-        // ========================================
+        // ============================================
+        // LOCALSTORAGE SAVE FUNCTION
+        // ============================================
         function saveToLocalStorage(formData) {
             try {
-                // Get existing submissions from localStorage
+                // Get existing submissions
                 let submissions = JSON.parse(localStorage.getItem('suryatanaya_submissions') || '[]');
 
-                // Add new submission to the beginning of array
-                submissions.unshift({
-                    id: Date.now(), // Unique ID
+                // Create new submission object
+                const newSubmission = {
+                    id: Date.now(),
                     date: formData.date,
                     name: formData.name,
                     email: formData.email,
-                    phone: formData.phone,
+                    phone: formData.phone || 'Not provided',
                     subject: formData.subject,
                     message: formData.message,
-                    status: 'new' // Mark as new/unread
-                });
+                    status: 'new'
+                };
 
-                // Save back to localStorage
+                // Add to beginning of array (newest first)
+                submissions.unshift(newSubmission);
+
+                // Save to localStorage
                 localStorage.setItem('suryatanaya_submissions', JSON.stringify(submissions));
-                console.log('✅ Submission saved to localStorage for admin dashboard');
+
+                console.log('✅ Submission saved successfully:', newSubmission);
+                return true;
             } catch (error) {
                 console.error('❌ Error saving to localStorage:', error);
+                return false;
             }
         }
 
-        // Form Submission
+        // ============================================
+        // FORM SUBMISSION HANDLER
+        // ============================================
         const contactForm = document.getElementById('contactForm');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
@@ -738,42 +752,59 @@
             submitBtn.disabled = true;
             btnText.textContent = 'Sending...';
 
-            // Get form data
+            // Collect form data
             const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                subject: document.getElementById('subject').value,
-                message: document.getElementById('message').value,
-                date: new Date().toLocaleString()
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                subject: document.getElementById('subject').value.trim(),
+                message: document.getElementById('message').value.trim(),
+                date: new Date().toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true
+                })
             };
 
-            try {
-                // ========================================
-                // STEP 1: Save to localStorage for Admin Dashboard
-                // ========================================
-                saveToLocalStorage(formData);
+            console.log('📨 Form submitted:', formData);
 
-                // ========================================
+            try {
+                // ============================================
+                // STEP 1: Save to localStorage for Admin Dashboard
+                // ============================================
+                const savedToStorage = saveToLocalStorage(formData);
+
+                if (!savedToStorage) {
+                    throw new Error('Failed to save to localStorage');
+                }
+
+                // ============================================
                 // STEP 2: Send email to admin
-                // ========================================
+                // ============================================
+                console.log('📧 Sending admin email...');
                 await emailjs.send(
                     EMAILJS_SERVICE_ID,
                     EMAILJS_TEMPLATE_ADMIN,
                     {
-                        to_email: 'kdvlogs78@gmail.com', // Admin email
+                        to_email: 'kdvlogs78@gmail.com',
                         from_name: formData.name,
                         from_email: formData.email,
-                        phone: formData.phone,
+                        phone: formData.phone || 'Not provided',
                         subject: formData.subject,
                         message: formData.message,
                         date: formData.date
                     }
                 );
+                console.log('✅ Admin email sent successfully');
 
-                // ========================================
+                // ============================================
                 // STEP 3: Send thank you email to user
-                // ========================================
+                // ============================================
+                console.log('📧 Sending user confirmation email...');
                 await emailjs.send(
                     EMAILJS_SERVICE_ID,
                     EMAILJS_TEMPLATE_USER,
@@ -783,29 +814,61 @@
                         subject: formData.subject
                     }
                 );
+                console.log('✅ User confirmation email sent successfully');
 
-                // Show success message
+                // ============================================
+                // SUCCESS: Show success message and reset form
+                // ============================================
                 alertSuccess.classList.add('show');
                 contactForm.reset();
 
-                // Hide success message after 5 seconds
+                // Auto-hide success message after 5 seconds
                 setTimeout(() => {
                     alertSuccess.classList.remove('show');
                 }, 5000);
 
+                console.log('✅ Form submission completed successfully!');
+
             } catch (error) {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Failed to send message. Please try again or contact us directly.';
+                // ============================================
+                // ERROR HANDLING
+                // ============================================
+                console.error('❌ Error during form submission:', error);
+
+                let errorMsg = 'Failed to send message. ';
+
+                if (error.text) {
+                    errorMsg += `Error: ${error.text}`;
+                } else if (error.message) {
+                    errorMsg += error.message;
+                } else {
+                    errorMsg += 'Please try again or contact us directly.';
+                }
+
+                errorMessage.textContent = errorMsg;
                 alertError.classList.add('show');
 
-                // Hide error message after 5 seconds
+                // Auto-hide error message after 7 seconds
                 setTimeout(() => {
                     alertError.classList.remove('show');
-                }, 5000);
+                }, 7000);
             } finally {
-                // Re-enable button
+                // ============================================
+                // ALWAYS: Re-enable submit button
+                // ============================================
                 submitBtn.disabled = false;
                 btnText.textContent = 'Send Message';
+            }
+        });
+
+        // ============================================
+        // DEBUG: Check localStorage on page load
+        // ============================================
+        window.addEventListener('load', () => {
+            const submissions = JSON.parse(localStorage.getItem('suryatanaya_submissions') || '[]');
+            console.log(`📊 Total submissions in localStorage: ${submissions.length}`);
+            if (submissions.length > 0) {
+                console.log('Latest submission:', submissions[0]);
             }
         });
     </script>
