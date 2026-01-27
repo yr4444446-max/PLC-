@@ -10,6 +10,37 @@
     <script src="https://unpkg.com/gsap@3/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 
+    <!-- Firebase SDKs (Version 9+) -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        // ============================================
+        // FIREBASE CONFIGURATION
+        // ============================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCn8iimVdTVVZ5AO_OCmGlTliupzJJ4qbI",
+            authDomain: "suryatanaya2026.firebaseapp.com",
+            projectId: "suryatanaya2026",
+            storageBucket: "suryatanaya2026.firebasestorage.app",
+            messagingSenderId: "548219372581",
+            appId: "1:548219372581:web:175fc351feb0cc6c412bcc"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        console.log('✅ Firebase initialized successfully');
+
+        // Make db available globally
+        window.firestoreDB = db;
+        window.firestoreCollection = collection;
+        window.firestoreAddDoc = addDoc;
+        window.firestoreServerTimestamp = serverTimestamp;
+    </script>
+
     <style>
         :root {
             --primary: #0066cc;
@@ -630,7 +661,10 @@
         <p>© 2025 Suryatanaya Innovation LLP. All Rights Reserved.</p>
     </footer>
 
-    <script>
+    <script type="module">
+        // Import Firebase functions
+        import { getFirestore, collection, addDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
         // ============================================
         // GSAP ANIMATIONS
         // ============================================
@@ -698,14 +732,40 @@
         emailjs.init(EMAILJS_PUBLIC_KEY);
 
         // ============================================
-        // LOCALSTORAGE SAVE FUNCTION
+        // FIREBASE FIRESTORE - SAVE TO DATABASE
+        // ============================================
+        async function saveToFirestore(formData) {
+            try {
+                const db = window.firestoreDB;
+                
+                // Create document with all form data
+                const docRef = await addDoc(collection(db, 'contact_submissions'), {
+                    name: formData.name,
+                    email: formData.email,
+                    phone: formData.phone || 'Not provided',
+                    subject: formData.subject,
+                    message: formData.message,
+                    status: 'new',
+                    submittedAt: serverTimestamp(),
+                    userAgent: navigator.userAgent,
+                    source: 'website_contact_form'
+                });
+
+                console.log('✅ Document written to Firestore with ID:', docRef.id);
+                return { success: true, id: docRef.id };
+            } catch (error) {
+                console.error('❌ Error saving to Firestore:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ============================================
+        // LOCALSTORAGE SAVE FUNCTION (Backup)
         // ============================================
         function saveToLocalStorage(formData) {
             try {
-                // Get existing submissions
                 let submissions = JSON.parse(localStorage.getItem('suryatanaya_submissions') || '[]');
 
-                // Create new submission object
                 const newSubmission = {
                     id: Date.now(),
                     date: formData.date,
@@ -717,13 +777,10 @@
                     status: 'new'
                 };
 
-                // Add to beginning of array (newest first)
                 submissions.unshift(newSubmission);
-
-                // Save to localStorage
                 localStorage.setItem('suryatanaya_submissions', JSON.stringify(submissions));
 
-                console.log('✅ Submission saved successfully:', newSubmission);
+                console.log('✅ Backup saved to localStorage:', newSubmission);
                 return true;
             } catch (error) {
                 console.error('❌ Error saving to localStorage:', error);
@@ -774,12 +831,14 @@
 
             try {
                 // ============================================
-                // STEP 1: Save to localStorage for Admin Dashboard
+                // STEP 1: Save to Firebase Firestore (PRIMARY)
                 // ============================================
-                const savedToStorage = saveToLocalStorage(formData);
+                console.log('💾 Saving to Firestore...');
+                const firestoreResult = await saveToFirestore(formData);
 
-                if (!savedToStorage) {
-                    throw new Error('Failed to save to localStorage');
+                if (!firestoreResult.success) {
+                    console.warn('⚠️ Firestore save failed, using localStorage as backup');
+                    saveToLocalStorage(formData);
                 }
 
                 // ============================================
@@ -822,7 +881,6 @@
                 alertSuccess.classList.add('show');
                 contactForm.reset();
 
-                // Auto-hide success message after 5 seconds
                 setTimeout(() => {
                     alertSuccess.classList.remove('show');
                 }, 5000);
@@ -848,7 +906,6 @@
                 errorMessage.textContent = errorMsg;
                 alertError.classList.add('show');
 
-                // Auto-hide error message after 7 seconds
                 setTimeout(() => {
                     alertError.classList.remove('show');
                 }, 7000);
@@ -862,7 +919,7 @@
         });
 
         // ============================================
-        // DEBUG: Check localStorage on page load
+        // DEBUG: Check storage on page load
         // ============================================
         window.addEventListener('load', () => {
             const submissions = JSON.parse(localStorage.getItem('suryatanaya_submissions') || '[]');
